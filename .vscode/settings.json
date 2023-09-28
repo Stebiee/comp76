@@ -1,0 +1,7 @@
+{
+    "java.project.sourcePaths": [
+        "testing/src",
+        "abstract_classes/absClasses/src",
+        "test1/src/main/java/stebs"
+    ]
+}
