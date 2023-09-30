@@ -1,3 +1,11 @@
+
+/**
+ * this class implements two public methods,
+ * charCount uses recursion to find the occurences of a character in a string
+ * substringCount uses recursion to find the occurences 
+ * of a substring in the passed string
+ * @author Esteban Madrigal
+ */
 public class RecursiveCharacterCounter {
     /**
      * method uses recursion to count the number of occurences 
@@ -45,60 +53,63 @@ public class RecursiveCharacterCounter {
      * @returns number of occurences str has of substring
      */
     public static int substringCount(String str, String subString) {
-        int strIndex = 0;
-        int subIndex = 0;
-        // amount of elements compared equally in a row
-        int serially = 0;
 
         // first makes sure either parameter holds elements
         if(str.length() == 0 || subString.length() == 0){
             return 0;
         }else if(subString.length() > str.length()){
             // substring is greater than str
-            // impossible for str to contain it
+            // impossible for str to contain subString
             return 0;
         }
 
-        // converts parameters to char arrays
+        // converts parameters to lowercase then character arrays
+        str = str.toLowerCase();
+        subString = subString.toLowerCase();
         char[] strChars = str.toCharArray();
         char[] subChars = subString.toCharArray();
 
-        return substringCountHelper(strChars, subChars, serially, strIndex, subIndex);
+        return substringCountHelper(strChars, subChars, 0, 0);
     }
 
     /**
      * uses recursion to increment through every element of strChars array
      * if an element equals the first element of subChars, the method then compares
-     * the following elements, while incrementing serially, which stores 
+     * the following elements, while incrementing subIndex, which stores 
      * how many elements in a row have been equal to eachother,
-     * when elements are inequal, serially and subindex are reset to 0,
+     * when elements are inequal, subindex is reset to 0,
      * and strIndex with any method call is increased by 1
-     * @param strChars array of string to be compared
-     * @param subChars array in which strChars should be compared against
-     * @param serially how many elements equal eachother in a row
+     * @param str array of string to be compared
+     * @param sub array in which strChars should be compared against
      * @param strIndex increments by one every recursive call
      * @param subIndex increments by one when elements equal eachother
      * @return amount of occurences strchars has of subChars
      */
-    private static int substringCountHelper(char[] strChars,char[] subChars,
-                int serially, int strIndex, int subIndex){
+    private static int substringCountHelper(char[] str,char[] sub,
+                int strIndex, int subIndex){
+        
         // base case: returns 0 if index >= than strChars length
-        if (strIndex >= strChars.length){
+        if (strIndex >= str.length || subIndex >= sub.length){
             return 0;
-        }else if(strChars[strIndex] == subChars[subIndex]){
+        }else if(str[strIndex] == sub[subIndex]){
             // both elements matched
-            if(serially + 1 == subChars.length){
-                // subSize matches serially
-                return 1 + substringCountHelper(strChars, subChars,
-                    0, strIndex + 1, 0);
+            if(subIndex + 1 == sub.length){
+                // subString length equals subindex
+                return 1 + substringCountHelper(str, sub,
+                    strIndex + 1, 0);
             }
-            // serially still low, continue with next element
-            return substringCountHelper(strChars, subChars,
-                serially + 1, strIndex + 1, subIndex + 1);
+            // subIndex still low, continue with next element
+            return substringCountHelper(str, sub,
+                strIndex + 1, subIndex + 1);
+        }else if(str[strIndex] == sub[0]){
+            // str doesnt match sub at given index
+            // but str element matches the first in sub
+            return substringCountHelper(str, sub,
+                strIndex + 1, 1);
         }
 
-        // elements dont match reset serially and subindex to 0, step strIndex
-        return substringCountHelper(strChars, subChars,
-                0, strIndex + 1, 0);
+        // elements dont match reset subindex to 0, step strIndex
+        return substringCountHelper(str, sub,
+                strIndex + 1, 0);
     }
 }

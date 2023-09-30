@@ -6,6 +6,30 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "Main",
+            "projectName": "test1_6351b6d9",
+            "console": "externalTerminal"
+        },
+        {
+            "type": "java",
+            "name": "main",
+            "request": "launch",
+            "mainClass": "main",
+            "projectName": "test1_6351b6d9",
+            "console": "externalTerminal"
+        },
+        {
+            "type": "java",
+            "name": "app",
+            "request": "launch",
+            "mainClass": "app",
+            "projectName": "test1_6351b6d9",
+            "console": "externalTerminal"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}",
