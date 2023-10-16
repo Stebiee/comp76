@@ -1,4 +1,5 @@
 import java.util.Map;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,7 +70,7 @@ public class Driver {
       }
    }
 
-   public static void main(String[] args){
+   public static void main(String[] args) throws FileNotFoundException{
       Map<String, String> testOutput = new HashMap<>();
       // Create one with a non-existent file. Should throw exception.
       // Check to make sure that all words return the appropriate count.
@@ -79,7 +80,7 @@ public class Driver {
       checkThrowsException(testOutput, "Creating CountWords with non-existent files should throw exception",
                         throwingConsumerWrapper(() -> new CountWords("/tmp/non-existent-file")));
 
-      CountWords cw = new CountWords("E:\\aaaJava\\setsAndMaps\\src\\hamlet.txt");
+      CountWords cw = new CountWords("C:\\Programming\\comp76\\setsAndMaps\\src\\hamlet.txt");
       Map<String, Integer> expectedCounts = new HashMap<String, Integer>();
       expectedCounts.put("horatio", 158);
       expectedCounts.put("FORTINBRAS", 21);

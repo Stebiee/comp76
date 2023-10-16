@@ -9,6 +9,14 @@
             "name": "Driver",
             "request": "launch",
             "mainClass": "Driver",
+            "projectName": "setsAndMaps_f48126ea",
+            "console": "externalTerminal"
+        },
+        {
+            "type": "java",
+            "name": "Driver",
+            "request": "launch",
+            "mainClass": "Driver",
             "projectName": "setsAndMaps_f1670f7",
             "console": "externalTerminal"
         },
