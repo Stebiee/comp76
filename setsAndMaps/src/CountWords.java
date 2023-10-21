@@ -3,7 +3,6 @@ import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 
 /** 
  * class uses a hashmap to store occurences of words in a text file 
@@ -21,16 +20,18 @@ public class CountWords {
      */
     public CountWords(String fileName) throws FileNotFoundException{
         try (Scanner sc = new Scanner(new File(fileName))){
-            sc.useDelimiter(Pattern.compile("[\\s,;.:?'\")(]+"));
+            // split words on whitespace and punctuation marks
+            sc.useDelimiter("[\\s,;.:?'\")(]+");
             
-            // only coninue if possible
+            // only coninue if there are words to look through
             while (sc.hasNext()) {
+                // go to next word, make sure its lowercase for comparison
                 String word = sc.next().toLowerCase();
 
                 // makes sure words start with letter
                 word = word.replaceAll("[^a-z]", "");
 
-                // Update word counts in the map
+                // add word to hashMap if not empty
                 if (!word.isEmpty()) {
                     wordMap.put(word, wordMap.getOrDefault(word, 0) + 1);
                 }
@@ -45,11 +46,15 @@ public class CountWords {
      * @return int number of occurences of passed word
      */
     public int getCount(String word) {
+        // make param lowercase for comparison
         word = word.toLowerCase();
+
+        // if word exists in hashMap return its value
         if (wordMap.containsKey(word)) {
             return wordMap.get(word);
         }
 
+        // word doesnt exist in hashMap value is 0
         return 0;
     }
 }

@@ -1,9 +1,6 @@
 import java.util.Map;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
 
 public class Driver {
 
@@ -80,7 +77,7 @@ public class Driver {
       checkThrowsException(testOutput, "Creating CountWords with non-existent files should throw exception",
                         throwingConsumerWrapper(() -> new CountWords("/tmp/non-existent-file")));
 
-      CountWords cw = new CountWords("C:\\Programming\\comp76\\setsAndMaps\\src\\hamlet.txt");
+      CountWords cw = new CountWords("E:\\aaaJava\\setsAndMaps\\src\\hamlet.txt");
       Map<String, Integer> expectedCounts = new HashMap<String, Integer>();
       expectedCounts.put("horatio", 158);
       expectedCounts.put("FORTINBRAS", 21);
