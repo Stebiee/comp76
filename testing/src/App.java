@@ -66,9 +66,9 @@ public class App {
     public static void main(String[] args) throws Exception {
         // Create a sample array of integers
         Random r = new Random();
-        Integer[] arr = new Integer[10];
+        Integer[] arr = new Integer[11];
         int running = 0;
-        while (running <= 10) {
+        while (running < 11) {
             for (int i = 0; i < arr.length; i++) {
                 arr[i] = r.nextInt(1000);
             }

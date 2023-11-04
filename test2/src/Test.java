@@ -1,6 +1,11 @@
 import java.util.Arrays;
 import java.util.Comparator;
 
+/**
+ * this class contains methods which use 2 mergeSort methods 
+ * to be used to sort objects
+ * @author Esteban Madrigal
+ */
 public class Test {
 
     /**
@@ -29,19 +34,24 @@ public class Test {
         merge(list, leftHalf, rightHalf);
     }
 
-    // merges two sorted Arrays
+    /**
+     * After mergeSort divides the array, order the elements
+     * and combine them into one
+     * @param list origional list to be sorted
+     * @param leftHalf left element to be compared
+     * @param rightHalf right element to be compared
+     */
     private static <E extends Comparable<E>> void merge (E[] list, E[] leftHalf, E[] rightHalf) {
         // index of left, right, combined arrays
         int i = 0, j = 0, k = 0;
         int leftSize = leftHalf.length;
         int rightSize = rightHalf.length;
 
-        // loop until elements run out of left or right array
+        // loop until an array runs out of elements
         while (i < leftSize && j < rightSize) {
 
-            // compares elements of either adding the smaller to
+            // compares elements adding the smaller to tail of
             // combined array while increasing that halfs index
-            // then making the same comparison
             if (leftHalf[i].compareTo(rightHalf[j]) <= 0) {
                 // left element <= right
                 list[k] = leftHalf[i];
@@ -54,8 +64,9 @@ public class Test {
             // itterate the combined array
             k++;
         }
-        // if one of the halves ran out of elements
-        // add the remaining array to tail of combined
+        // one of the arrays has ran out of elements
+        // itterate through the array which still contains elements
+        // adding them to the tail of combined array
         while (i < leftSize) {
             list[k] = leftHalf[i];
             i++;
@@ -73,6 +84,9 @@ public class Test {
      * This method sorts the given array using Merge Sort using the passed in Comparator.
      * Sorting is done in place (ie after the method completes, the passed in array is in
      * sorted order).
+     * 
+     * @param list list to be sorted
+     * @param comparator Comparator
      */
     public static <E> void mergeSort(E[] list, Comparator<? super E> comparator) {
         int middle;
@@ -96,30 +110,40 @@ public class Test {
         merge(list, leftHalf, rightHalf, comparator);
     }
 
+    /**
+     * After mergeSort divides the array, order the elements
+     * and combine them into one
+     * @param list origional list 
+     * @param leftHalf left element to be compared
+     * @param rightHalf right element to be compared
+     * @param comparator Comparator 
+     */
     private static <E> void merge(E[] list, E[] leftHalf, E[] rightHalf, Comparator<? super E> comparator) {
         // index of left, right, combined arrays
         int i = 0, j = 0, k = 0;
         int leftSize = leftHalf.length;
         int rightSize = rightHalf.length;
 
-        // loop until elements run out of left or right array
+        // loop until an array runs out of elements
         while (i < leftSize && j < rightSize) {
 
-            // uses comparator for both arrays adding the smaller 
-            // to combined array while increasing that halfs index
-            // then making the same comparison
+            // compares elements adding the smaller to tail of
+            // combined array while increasing that halfs index
             if (comparator.compare(leftHalf[i], rightHalf[j]) <= 0) {
+                // left <= right
                 list[k] = leftHalf[i];
                 i++;
             } else {
+                // right < left
                 list[k] = rightHalf[j];
                 j++;
             }
             // itterate the combined array
             k++;
         }
-        // if one of the halves ran out of elements
-        // add the remaining array to tail of combined
+        // one of the arrays has ran out of elements
+        // itterate through the array which still contains elements
+        // adding them to the tail of combined array
         while (i < leftSize) {
             list[k] = leftHalf[i];
             i++;
@@ -132,6 +156,9 @@ public class Test {
         }
     }
 
+    /**
+     * 
+     */
     static class Circle extends GeometricObject {
         double radius;
         
@@ -210,34 +237,101 @@ public class Test {
     static class ComparePerimeter implements Comparator<GeometricObject> {
 
         @Override
-        // compares o1 and o2 by their perimeters
+        // compares o1 and o2 by their perimeters, then by area if perimeter equal
         public int compare(GeometricObject o1, GeometricObject o2) {
+            if (Double.compare(o1.getPerimeter(), o2.getPerimeter()) == 0) {
+                // perimeters equal compare their areas
+                return Double.compare(o1.getArea(), o2.getArea());
+            }
+            // perimeters are either less or greater than
             return Double.compare(o1.getPerimeter(), o2.getPerimeter());
         }
     }
 
+    /**
+     * tests sorting an array of geometric objects using Comparable
+     */
     public static void testSortingUsingComparable() {
-        // TODO: Add at least 3 test cases here. Think of all the ways you want to verify that your code works.
-        // The objects you are trying to sort should be a mix of Circles and Rectangles.
-        // Also add a comment on what other test cases you can think of adding.
-        Circle circle1 = new Circle(2.0);
-        Circle circle2 = new Circle(5.0);
-        Rectangle rect1 = new Rectangle(3, 2);
-        Rectangle rect2 = new Rectangle(4,1);
-        // declare a circle with radius -1
-        // declare a rectangle with width 0 length 1
-
-        GeometricObject[] objects = {circle1, circle2, rect1, rect2};
-
-        mergeSort(objects);
         
+        Circle circle1 = new Circle(5.0);
+        Circle circle2 = new Circle(3.0);
+        Circle circle3 = new Circle(12.0 / Math.PI);
+        Rectangle rectangle1 = new Rectangle(4.0, 4.0);
+        Rectangle rectangle2 = new Rectangle(6.0, 6.0);
+
+        // Test Case 1: Sorting Circles and Rectangles
+        GeometricObject[] objects = {circle1, rectangle1, circle2};
+        mergeSort(objects);
+
+        System.out.println("\nTest Case 1: Sorting Circles and Rectangles");
+        for (GeometricObject obj : objects) {
+            System.out.println("Perimeter " + obj.getPerimeter() + ", Area: " + obj.getArea());
+        }
+        
+        // Test Case 2: Sorting Rectangles with same perimeter as a circle
+        GeometricObject[] objects2 = {circle3, rectangle2};
+        mergeSort(objects2);
+
+        System.out.println("\nTest Case 2: Sorting Rectangles with same perimeter as a circle");
+        for (GeometricObject obj : objects2) {
+            System.out.println("Perimeter " + obj.getPerimeter() + ", Area: " + obj.getArea());
+        }
+
+        // Test Case 3: Sorting array with single element
+        GeometricObject[] objects3 = {circle1};
+        mergeSort(objects3);
+
+        System.out.println("\nTest Case 3: Sorting array with single element");
+        for (GeometricObject obj : objects3) {
+            System.out.println("Perimeter " + obj.getPerimeter() + ", Area: " + obj.getArea());
+        }
+
+        // create a circle obj with negative radius
+        // create a rectangle obj with length 0
     }
 
+    /**
+     * tests sorting an array of geometric objects using a comparitor
+     * on objects perimeter, if equal then their area
+     */
     public static void testSortingUsingComparator() {
-        // TODO: Add at least 3 test cases to verify that your code works correctly when using the
-        // ComparePerimeter comparator
-        // The objects you are trying to sort should be a mix of Circles and Rectangles.
-        // Also add a comment on what other test cases you can think of adding.
+        Circle circle1 = new Circle(5.0);
+        Circle circle2 = new Circle(3.0);
+        Circle circle3 = new Circle(12.0 / Math.PI);
+        Rectangle rectangle1 = new Rectangle(4.0, 4.0);
+        Rectangle rectangle2 = new Rectangle(6.0, 6.0);
+
+        Comparator<GeometricObject> comparePerimeter = new ComparePerimeter();
+
+        // Test Case 1: Sorting Circles and Rectangles
+        GeometricObject[] objects = {circle1, rectangle1, circle2};
+        mergeSort(objects, comparePerimeter);
+
+        System.out.println("\nTest Case 1: Sorting Circles and Rectangles by Perimeter");
+        for (GeometricObject obj : objects) {
+            System.out.println("Perimeter " + obj.getPerimeter() + ", Area: " + obj.getArea());
+        }
+
+        // Test Case 2: Sorting Circles and Rectangles with same perimeter
+        GeometricObject[] objects2 = {circle3, rectangle2};
+        mergeSort(objects2, comparePerimeter);
+
+        System.out.println("\nTest Case 2: Sorting Circles and Rectangles with Same Perimeter");
+        for (GeometricObject obj : objects2) {
+            System.out.println("Perimeter " + obj.getPerimeter() + ", Area: " + obj.getArea());
+        }
+
+        // Test Case 3: Sorting array with single element
+        GeometricObject[] objects3 = {circle1};
+        mergeSort(objects3, comparePerimeter);
+
+        System.out.println("\nTest Case 3: Sorting array with single element");
+        for (GeometricObject obj : objects3) {
+            System.out.println("Perimeter " + obj.getPerimeter() + ", Area: " + obj.getArea());
+        }
+
+        // create a circle obj with negative radius
+        // create a rectangle obj with length 0
     }
 
     static abstract class GeometricObject implements Comparable<GeometricObject> {
@@ -258,7 +352,10 @@ public class Test {
             }
         }
     }
+
     public static void main(String[] args) {
         testSortingUsingComparable();
+        System.out.println("=====================================");
+        testSortingUsingComparator();
     }
 }
