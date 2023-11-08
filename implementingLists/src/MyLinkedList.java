@@ -330,14 +330,44 @@ public class MyLinkedList<E> {
      * @return true if data is in linkedList
      */
     public boolean contains (E data) {
+        // look through the linkedList checking if any of the point.data == data
+        Node<E> pointer = head;
+        // counter 
+        int i = 0;
+        while (i < size) {
+            if (pointer.data == data) {
+                // linkedList contains data
+                return true;
+            } else if (pointer.next == null) {
+                // reached the end of the linkedList
+                return false;
+            }
+            pointer = pointer.next;
+            i++;
+        }
         return false;
     }
 
     /**
      * @param data
-     * @return index of data from left
+     * @return index of data occurence from left -1 if not in list
      */
     public int indexOf(E data) {
+        // starting from the left check if linkedList contains data
+        Node<E> pointer = head;
+        // counter 
+        int i = 0;
+        while (i < size) {
+            if (pointer.data == data) {
+                // linkedList contains data
+                return i;
+            } else if (pointer.next == null) {
+                // reached the end of the linkedList
+                return -1;
+            }
+            pointer = pointer.next;
+            i++;
+        }
         return -1;
     }
 
@@ -346,6 +376,21 @@ public class MyLinkedList<E> {
      * @return index of data from the right
      */
     public int lastIndexOf(E data) {
+        // starting from the right check if linkedList contains data
+        Node<E> pointer = head;
+        // counter 
+        int i = size;
+        while (i > 0) {
+            if (pointer.data == data) {
+                // linkedList contains data
+                return i;
+            } else if (pointer.next == null) {
+                // reached the end of the linkedList
+                return -1;
+            }
+            pointer = pointer.next;
+            i--;
+        }
         return -1;
     }
 
@@ -370,18 +415,22 @@ public class MyLinkedList<E> {
     public static void main(String[] args) {
         // testing the linked list
         MyLinkedList<Integer> linkedList = new MyLinkedList<>();
+        // checking linked list value
+        int contain = 1;
  
         
-        for (int i = 0; i < 10; i++) {
-            linkedList.addFirst(i);;
+        
+        
+        for (int i = 0; i < 5; i++) {
+            linkedList.addLast(i);
+        }
+        for (int i = 4; i >= 0; i--) {
+            linkedList.addLast(i);
         }
         
         System.out.println(linkedList + " " + linkedList.size);
-
-        for (int i = 0; i < linkedList.size; i++) {
-            linkedList.set(i, i);
-        }
-
-        System.out.println(linkedList);
+        System.out.printf("%d in list?: %b\n", contain, linkedList.contains(contain));
+        System.out.printf("%d at index: %d\n", contain, linkedList.indexOf(contain));
+        System.out.printf("%d at index: %d\n", contain, linkedList.lastIndexOf(contain));
     }
 }
