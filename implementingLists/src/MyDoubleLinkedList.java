@@ -59,13 +59,26 @@ public class MyDoubleLinkedList<T> implements List<T> {
          */
         @Override
         public boolean hasNext() {
-            return current.next != null;
+            // pointer to next should be null if empty
+            // return true if not null
+            return current.next != null && current.data != null;
         }
 
+        /*
+         * @return the next element in the list and advances the cursor position
+         */
         @Override
         public T next() {
-            // TODO: Implement this method.
-            throw new UnsupportedOperationException("Unimplemented method 'next'");
+            if (!hasNext()) {
+                // there is no element to the right
+                throw new NoSuchElementException(); 
+            }
+            // there is an element to the right
+            // return next element in list and advance cursor
+            T nextElement = current.next.data;
+            // advance cursor to the right
+            current = current.next;
+            return nextElement;
         }
 
         /**
@@ -74,13 +87,23 @@ public class MyDoubleLinkedList<T> implements List<T> {
          */
         @Override
         public boolean hasPrevious() {
-            return current != null;
+            // prev should be null if empty
+            // if not null contains element
+            return current.prev != null && current != null;
         }
 
         @Override
         public T previous() {
-            // TODO: Implement this method.
-            throw new UnsupportedOperationException("Unimplemented method 'previous'");
+            if (!hasPrevious()) {
+                // there is no element to the left
+                throw new NoSuchElementException(); 
+            }
+            // there is an element to the left
+            // return next element in list and advance cursor
+            T prevElement = current.prev.data;
+            // advance cursor to the left
+            current = current.prev;
+            return prevElement;
         }
 
         @Override
@@ -132,12 +155,23 @@ public class MyDoubleLinkedList<T> implements List<T> {
     }
 
     /**
-     * @return true if o is in 
+     * @return true if o is in list
      */
     @Override
     public boolean contains(Object o) {
-        // TODO: Implement this method.
-        throw new UnsupportedOperationException("Unimplemented method 'contains'");
+        // iter through linked list starting at head 
+        // when an element is found return true or false
+        Node<T> pointer = head;
+        
+        // loop through all nodes 
+        while (pointer != null) {
+            if (pointer.equals(o)) {
+                return true;
+            }
+        }
+
+        // looped through all elements none equal found
+        return false;
     }
 
     @Override

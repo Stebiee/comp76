@@ -428,6 +428,7 @@ public class MyLinkedList<E> {
             linkedList.addLast(i);
         }
         
+        
         System.out.println(linkedList + " " + linkedList.size);
         System.out.printf("%d in list?: %b\n", contain, linkedList.contains(contain));
         System.out.printf("%d at index: %d\n", contain, linkedList.indexOf(contain));
