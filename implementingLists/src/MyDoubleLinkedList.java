@@ -103,6 +103,8 @@ public class MyDoubleLinkedList<T> implements List<T> {
             T prevElement = current.prev.data;
             // advance cursor to the left
             current = current.prev;
+            T prevElement = current.prev.data; // return next element
+            current = current.prev; // advance cursor to the left
             return prevElement;
         }
 
