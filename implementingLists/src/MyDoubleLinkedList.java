@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
+
 /**
  * Assignment for the Implementing Lists module.
  * You need to implement all the TODOs.
@@ -27,6 +28,7 @@ public class MyDoubleLinkedList<T> implements List<T> {
         public Node(T t, Node<T> prev, Node<T> next) {
             this.prev = prev;
             this.next = next;
+            this.data = t;
         }
     };
 
@@ -53,6 +55,9 @@ public class MyDoubleLinkedList<T> implements List<T> {
     static class DoubleLinkedListIterator<T> implements ListIterator<T> {
         Node<T> current;
 
+        public DoubleLinkedListIterator(Node<T> head) {
+            this.current = head;
+        }
         /**
          * @return true if Node has element in forward position
          * @return false if Node has no element in forward position
@@ -99,10 +104,6 @@ public class MyDoubleLinkedList<T> implements List<T> {
                 throw new NoSuchElementException(); 
             }
             // there is an element to the left
-            // return next element in list and advance cursor
-            T prevElement = current.prev.data;
-            // advance cursor to the left
-            current = current.prev;
             T prevElement = current.prev.data; // return next element
             current = current.prev; // advance cursor to the left
             return prevElement;
@@ -170,22 +171,43 @@ public class MyDoubleLinkedList<T> implements List<T> {
             if (pointer.equals(o)) {
                 return true;
             }
+
+            pointer = pointer.next;
         }
 
         // looped through all elements none equal found
         return false;
     }
 
+    /**
+     * @return an iterator over the elements in this list in proper sequence
+     */
     @Override
     public Iterator<T> iterator() {
-        // TODO: Implement this method.
-        throw new UnsupportedOperationException("Unimplemented method 'iterator'");
+        return new DoubleLinkedListIterator<T>(head);
     }
 
+    /**
+     * @return an array containing all of the elements in this list in proper sequence (from first to last element)
+     */
     @Override
     public Object[] toArray() {
-        // TODO: Implement this method.
-        throw new UnsupportedOperationException("Unimplemented method 'toArray'");
+        Object[] array = new Object[numElements]; // declare an array with element size equal to linkedList
+        
+        if (head.data == null) return array;
+
+        Node<T> pointer = head; // node used to go through linked list
+        int i = 0; // stores index of array
+
+        while (pointer != null) {
+            if (pointer.data == null && i >= array.length) break;
+            array[i] = pointer.data; // assign Node data to current index of array
+            pointer = pointer.next; // go to next node
+            i++;
+        }
+
+        // end of linked list was reached
+        return array;
     }
 
     @Override
@@ -194,94 +216,339 @@ public class MyDoubleLinkedList<T> implements List<T> {
         throw new UnsupportedOperationException("Unimplemented method 'toArray'");
     }
 
+    /**
+     * Appends the specified element to the end of this list
+     * @return true
+     */
     @Override
     public boolean add(T t) {
-        // TODO: Implement this method.
-        throw new UnsupportedOperationException("Unimplemented method 'add'");
+        // creating a new node where prev is old tail, next is null
+        Node<T> node = new Node<>(t, tail, null);
+        System.out.println("t is " + t);
+        System.out.println("node.data is " + node.data);
+
+        if (head == null && tail == null) {
+            // list is empty
+            head = tail = node; // set the head to new node 
+        } else {
+            // set old tail forward pointer to new node
+            tail.next = node;
+            tail = node; // new node is set to tail
+            numElements++; // since element added increment
+        }
+
+        System.out.println("adding " + t + " to end, tail is " + node.data);
+
+        return true;
     }
 
+    /**
+     * Removes the first occurrence of the specified element from this list, if it is present
+     * @return true if an element is removed
+     */
     @Override
     public boolean remove(Object o) {
-        // TODO: Implement this method.
-        throw new UnsupportedOperationException("Unimplemented method 'remove'");
+        Node<T> prev = null; // reference to node before o
+        Node<T> pointer = head; // begin at head of the list
+        Node<T> after = head.next; //  reference to node after o
+        if (pointer.data == null) return false;
+
+        while (pointer != null) {
+            if (pointer.data.equals(o)) {
+                // arrived at element to be removed
+                if (pointer.prev == null) {
+                    // o is the head
+                    head = pointer.next; // set new head to element after it
+                    head.prev = null; // remove old reference to origional head
+                    numElements--; // decrement amount of elements
+                    return true;
+                } 
+                if (pointer.next == null) {
+                    // o is tail 
+                    tail = pointer.prev; // set new tail to element before it
+                    tail.next = null; // remove old reference to origional tail
+                    numElements--; // decrement amount of
+                    return true;
+                }
+
+                // o is somewhere in middle of list
+                prev.next = after; // elem before o .next to elem after o 
+                after.prev = prev; // elem after o .prev to elem before o
+
+                // o should have been removed from any reference
+                numElements--;
+                return true;
+            }
+
+            prev = pointer; // store element before o
+            pointer = pointer.next; // store o
+            after = pointer.next; // store the element after o
+        }
+        // pointer is null, list is empty or list does not contain o
+        return false;
     }
 
+    /**
+     * @return true if this list contains all of the elements of the specified collection
+     */
     @Override
     public boolean containsAll(Collection<?> c) {
-        // TODO: Implement this method.
-        throw new UnsupportedOperationException("Unimplemented method 'containsAll'");
+        for (Object element : c) {
+            if (!contains(element)) {
+                // an element was not found
+                return false; 
+            }
+        }
+        // all elements in c are in linked list
+        return true;
     }
 
+    /**
+     * Appends all of the elements in the specified collection to the end of this list
+     * @return true if elements are added
+     */
     @Override
     public boolean addAll(Collection<? extends T> c) {
-        // TODO: Implement this method.
-        throw new UnsupportedOperationException("Unimplemented method 'addAll'");
+        boolean isModified = false; // store whether elements are added
+
+        for (T element : c) {
+            if (add(element)) {
+                // an element was added
+                isModified = true;
+            }
+        }
+
+        return isModified;
     }
 
+    /**
+     * Inserts all of the elements in the specified collection into this list at the specified position
+     * @return true if elements are added
+     */
     @Override
     public boolean addAll(int index, Collection<? extends T> c) {
         // TODO: Implement this method for extra credit.
         throw new UnsupportedOperationException("Unimplemented method 'addAll'");
     }
 
+    /**
+     * Removes from this list all of its elements that are contained in the specified collection
+     * @return true if elements are removed
+     */
     @Override
     public boolean removeAll(Collection<?> c) {
-        // TODO: Implement this method for extra credit.
-        throw new UnsupportedOperationException("Unimplemented method 'removeAll'");
+        boolean isModified = false; // store whether elements are added
+
+        for (Object element : c) {
+            if (remove(element)) {
+                // an element was removed
+                isModified = true;
+            }
+        }
+
+        return isModified;
     }
 
+    /**
+     * Retains only the elements in this list that are contained in the specified collection
+     */
     @Override
     public boolean retainAll(Collection<?> c) {
-        // TODO: Implement this method for extra credit.
-        throw new UnsupportedOperationException("Unimplemented method 'retainAll'");
+        boolean isModified = false; // store whether the list is modified
+
+        Iterator<T> iter = iterator();
+
+        while (iter.hasNext()) {
+            // iter has a next element 
+            T element = iter.next(); // set element to next iter
+
+            if (!c.contains(element)) {
+                // element is not in collection
+                iter.remove();
+                isModified = true;
+            }
+        }
+
+        return isModified;
     }
 
+    /**
+     * Removes all of the elements from this list
+     */
     @Override
     public void clear() {
-        // TODO: Implement this method.
-        throw new UnsupportedOperationException("Unimplemented method 'clear'");
+        // set 
+        head.next = null;
+        head.data = null;
+        head.prev = null;
+        tail.prev = null;
+        tail.data = null;
+        tail.next = null;
+        numElements = 0;
     }
 
+    /**
+     * throws IndexOutOfBoundsException - if the index is out of range
+     * @return the element at the specified position in this list
+     */
     @Override
     public T get(int index) {
-        // TODO: Implement this method.
-        throw new UnsupportedOperationException("Unimplemented method 'get'");
+        if (index < 0 || index >= numElements) {
+            // index is out of bounds
+            throw new IndexOutOfBoundsException();
+        } 
+        
+        if (index == 0 && head.data != null) {
+            return head.data; // index 0 is first element
+        } else if (index == numElements - 1 && tail.data != null) {
+            return tail.data; // index is at end of linked list
+        }
+
+        Node<T> node = head;
+        
+        // index isnt 0 or at end of the list
+        for (int i = 0; i < index; i++) {
+            node = node.next;
+        }
+
+        System.out.println("stopped at " + index);
+        System.out.println("data is " + node.data);
+        // having iter until index return that elements data
+        return node.data;
     }
 
+    /**
+     * Replaces the element at the specified position in this list with the specified element
+     * @return element previously at index
+     */
     @Override
     public T set(int index, Object element) {
-        // TODO: Implement this method.
-        throw new UnsupportedOperationException("Unimplemented method 'set'");
+        if (index < 0 || index >= numElements) {
+            // index is out of bounds
+            throw new IndexOutOfBoundsException();
+        }
+        
+        Node<T> node = head;
+
+        for (int i = 0; i <= index; i++) {
+            node = node.next;
+        }
+
+        T prevData = node.data;
+        node.data = (T) element;
+        return prevData;
+        
     }
 
+    /**
+     * Inserts the specified element at the specified position in this list 
+     */
     @Override
     public void add(int index, T element) {
-        // TODO: Implement this method.
-        throw new UnsupportedOperationException("Unimplemented method 'add'");
+        if (index < 0 || index <= numElements) {
+            // index is out of bounds
+            throw new IndexOutOfBoundsException();
+        } else if (index == 0) {
+            // index zero is head
+            head.data = element;
+        } else if (index == numElements - 1) {
+            // index is at tail of list
+            tail.data = element;
+        }
+        // index somewhere in middle of list
+        // go to node at index
+        Node<T> node = head.next;
+        int i = 1; // since node starts after head
+        while (i != index) {
+            node = node.next;
+        }
+        // arrived at node at index
+        node.data = element;
     }
 
+    /**
+     * Removes the element at the specified position in this list
+     * @return element previously at index
+     */
     @Override
     public T remove(int index) {
-        // TODO: Implement this method.
-        throw new UnsupportedOperationException("Unimplemented method 'remove'");
+        T prevData; // data previously at index
+        if (index < 0 || index <= numElements) {
+            // index is out of bounds
+            throw new IndexOutOfBoundsException();
+        } else if (index == 0) {
+            // index zero is head
+            prevData = head.data; // store previous data before overwriting
+            remove(head);
+            return prevData;
+        } else if (index == numElements - 1) {
+            // index is at tail of list
+            prevData = tail.data; // store previous data before overwriting
+            remove(tail);
+            return prevData;
+        }
+        // index somewhere in middle of list
+        // go to node at index
+        Node<T> node = head.next;
+        int i = 1; // since node starts after head
+        while (i != index) {
+            node = node.next;
+        }
+        // arrived at node at index
+        prevData = node.data; // store previous data before overwriting
+        remove(node);
+        return prevData;
     }
 
+    /**
+     * 
+     * @return index of the first occurrence of the specified element in this list from the left
+     */
     @Override
     public int indexOf(Object o) {
-        // TODO: Implement this method.
-        throw new UnsupportedOperationException("Unimplemented method 'indexOf'");
+        Node<T> pointer = head;
+        int i = 0;
+
+        // loop until having reached the element
+        while (pointer != null) {
+            if (pointer.equals(o)) {
+                return i;
+            }
+            pointer = pointer.next;
+            i++; // increment index
+        }
+        // looped through linked list without finding o
+        return -1;
     }
 
+    /**
+     * returns -1 if object not in list
+     * @return the index of the last occurrence of the specified element in this list
+     */
     @Override
     public int lastIndexOf(Object o) {
-        // TODO: Implement this method for extra credit.
-        throw new UnsupportedOperationException("Unimplemented method 'lastIndexOf'");
+        Node<T> pointer = tail;
+        int i = numElements - 1; // index of tail
+
+        // loop until having reached the element starting from the tail
+        while (pointer != null) {
+            if (pointer.equals(o)) {
+                return i;
+            }
+            pointer = pointer.prev;
+            i--; // increment index
+        }
+        // looped through linked list without finding o
+        return -1;
     }
 
+    /**
+     * 
+     * @return a list iterator over the elements in this list
+     */
     @Override
     public ListIterator<T> listIterator() {
-        // TODO: Implement this method.
-        throw new UnsupportedOperationException("Unimplemented method 'listIterator'");
+        return new DoubleLinkedListIterator<T>(head);
     }
 
     @Override
