@@ -199,7 +199,7 @@ public class MyDoubleLinkedList<T> implements List<T> {
         Node<T> pointer = head; // node used to go through linked list
         int i = 0; // stores index of array
 
-        while (pointer != null) {
+        while (pointer != null && i < numElements) {
             if (pointer.data == null && i >= array.length) break;
             array[i] = pointer.data; // assign Node data to current index of array
             pointer = pointer.next; // go to next node
@@ -224,8 +224,6 @@ public class MyDoubleLinkedList<T> implements List<T> {
     public boolean add(T t) {
         // creating a new node where prev is old tail, next is null
         Node<T> node = new Node<>(t, tail, null);
-        System.out.println("t is " + t);
-        System.out.println("node.data is " + node.data);
 
         if (head == null && tail == null) {
             // list is empty
@@ -236,8 +234,6 @@ public class MyDoubleLinkedList<T> implements List<T> {
             tail = node; // new node is set to tail
             numElements++; // since element added increment
         }
-
-        System.out.println("adding " + t + " to end, tail is " + node.data);
 
         return true;
     }
@@ -252,11 +248,17 @@ public class MyDoubleLinkedList<T> implements List<T> {
         Node<T> pointer = head; // begin at head of the list
         Node<T> after = head.next; //  reference to node after o
         if (pointer.data == null) return false;
+        System.out.print(prev);
+        System.out.print(pointer);
+        System.out.println(after);
 
         while (pointer != null) {
             if (pointer.data.equals(o)) {
                 // arrived at element to be removed
                 if (pointer.prev == null) {
+                    System.out.print(prev);
+                    System.out.print(pointer);
+                    System.out.println(after);
                     // o is the head
                     head = pointer.next; // set new head to element after it
                     head.prev = null; // remove old reference to origional head
@@ -264,12 +266,18 @@ public class MyDoubleLinkedList<T> implements List<T> {
                     return true;
                 } 
                 if (pointer.next == null) {
+                    System.out.print(prev);
+                    System.out.print(pointer);
+                    System.out.println(after);
                     // o is tail 
                     tail = pointer.prev; // set new tail to element before it
                     tail.next = null; // remove old reference to origional tail
                     numElements--; // decrement amount of
                     return true;
                 }
+                System.out.print(prev);
+                System.out.print(pointer);
+                System.out.println(after);
 
                 // o is somewhere in middle of list
                 prev.next = after; // elem before o .next to elem after o 
@@ -279,10 +287,6 @@ public class MyDoubleLinkedList<T> implements List<T> {
                 numElements--;
                 return true;
             }
-
-            prev = pointer; // store element before o
-            pointer = pointer.next; // store o
-            after = pointer.next; // store the element after o
         }
         // pointer is null, list is empty or list does not contain o
         return false;
