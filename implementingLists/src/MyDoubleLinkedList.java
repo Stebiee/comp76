@@ -251,19 +251,19 @@ public class MyDoubleLinkedList<T> implements List<T> {
      */
     @Override
     public boolean add(T t) {
-        // creating a new node where prev is old tail, next is null
+        // creating a new node to insert
         Node<T> node = new Node<>(t, null, null);
 
-        if (head == null) {
+        if (tail == null) {
             // list is empty
-            head = tail = node; // set the head to new node 
-            numElements = 1;
+            head = tail = node; // set the head and tail to new node 
+            numElements = 1; // list is 1 element in size
         } else {
             // linkedList is one element in size or more
             node.prev = tail; // point node to old tail
             tail.next = node; // point old tail to point at node
             tail = node; // set node to be new tail
-            numElements++;
+            numElements++; // increment element count
         }
 
         return true;
@@ -452,7 +452,7 @@ public class MyDoubleLinkedList<T> implements List<T> {
         Node<T> node = new Node<>(element, null, null);
 
         if (head == null) {
-            head = tail = null; // list was empty
+            head = tail = node; // list was empty
         } else if (index == 0) {
             // insert node before head
             node.next = head; // point node to head

@@ -152,6 +152,13 @@ public class Driver {
       if (list.add(4) == false) {
          testOutput.put("add", "Method returned false.");
       } else {
+         System.out.printf("size of linked list %d, elements ", list.size());
+         Object[] array = list.toArray();
+         for (Object elem : array) {
+            System.out.print(elem + " ");
+         } 
+         System.out.println();
+
          checkListContents(testOutput, "add", list, 1, 2, 3, 4);
       }
       // Remove an element that does not exist, check return value and size
