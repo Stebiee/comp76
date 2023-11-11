@@ -10,7 +10,7 @@ import java.util.NoSuchElementException;
  * You need to implement all the TODOs.
  * To see what each method needs to do check out: 
  * https://docs.oracle.com/javase/8/docs/api/java/util/List.html
- * @author Esteban MadrigalD
+ * @author Esteban Madrigal
  */
 public class MyDoubleLinkedList<T> implements List<T> {
     /**
@@ -121,10 +121,39 @@ public class MyDoubleLinkedList<T> implements List<T> {
             throw new UnsupportedOperationException("Unimplemented method 'previousIndex'");
         }
 
+        /**
+         * Removes from the list the last element that was returned by next() or previous() 
+         */
         @Override
         public void remove() {
-            // No need to implement this method.
-            throw new UnsupportedOperationException("Unimplemented method 'remove'");
+            if (current == null) {
+                throw new IllegalStateException("No element to remove");
+            }
+        
+            Node<T> remove = current.prev; // Node to be removed
+            Node<T> prevNode = remove.prev; // node before remove
+            Node<T> nextNode = remove.next; // node after remove
+        
+            if (prevNode != null) {
+                // there is an element before current node
+                prevNode.next = nextNode; // point previous to node after current
+            }
+        
+            if (nextNode != null) {
+                // there is an element after current node
+                nextNode.prev = prevNode; // point node after current to previous
+            }
+        
+            if (remove == current && remove.prev == null) {
+                // node to remove is head
+                current = nextNode; // update head
+            }
+        
+            // node to remove has no nodes pointing to it
+            // make all pointers null
+            remove.prev = null;
+            remove.next = null;
+            remove.data = null;
         }
 
         @Override
@@ -154,7 +183,7 @@ public class MyDoubleLinkedList<T> implements List<T> {
      */
     @Override
     public boolean isEmpty() {
-        return numElements == 0;
+        return head == null;
     }
 
     /**
@@ -223,16 +252,18 @@ public class MyDoubleLinkedList<T> implements List<T> {
     @Override
     public boolean add(T t) {
         // creating a new node where prev is old tail, next is null
-        Node<T> node = new Node<>(t, tail, null);
+        Node<T> node = new Node<>(t, null, null);
 
-        if (head == null && tail == null) {
+        if (head == null) {
             // list is empty
             head = tail = node; // set the head to new node 
+            numElements = 1;
         } else {
-            // set old tail forward pointer to new node
-            tail.next = node;
-            tail = node; // new node is set to tail
-            numElements++; // since element added increment
+            // linkedList is one element in size or more
+            node.prev = tail; // point node to old tail
+            tail.next = node; // point old tail to point at node
+            tail = node; // set node to be new tail
+            numElements++;
         }
 
         return true;
@@ -244,51 +275,26 @@ public class MyDoubleLinkedList<T> implements List<T> {
      */
     @Override
     public boolean remove(Object o) {
-        Node<T> prev = null; // reference to node before o
-        Node<T> pointer = head; // begin at head of the list
-        Node<T> after = head.next; //  reference to node after o
-        if (pointer.data == null) return false;
-        System.out.print(prev);
-        System.out.print(pointer);
-        System.out.println(after);
-
+        Node<T> pointer = head;
+        
+        // loop through all nodes 
         while (pointer != null) {
             if (pointer.data.equals(o)) {
-                // arrived at element to be removed
+                // o was found
                 if (pointer.prev == null) {
-                    System.out.print(prev);
-                    System.out.print(pointer);
-                    System.out.println(after);
-                    // o is the head
-                    head = pointer.next; // set new head to element after it
-                    head.prev = null; // remove old reference to origional head
-                    numElements--; // decrement amount of elements
-                    return true;
-                } 
-                if (pointer.next == null) {
-                    System.out.print(prev);
-                    System.out.print(pointer);
-                    System.out.println(after);
-                    // o is tail 
-                    tail = pointer.prev; // set new tail to element before it
-                    tail.next = null; // remove old reference to origional tail
-                    numElements--; // decrement amount of
-                    return true;
+                    // o is head
+                    head = pointer.next; // update head
                 }
-                System.out.print(prev);
-                System.out.print(pointer);
-                System.out.println(after);
+                
+                pointer.prev.next = pointer.next; // update prev.next to be after o
+                pointer.next.prev = pointer.prev; // update next.prev to be before o
 
-                // o is somewhere in middle of list
-                prev.next = after; // elem before o .next to elem after o 
-                after.prev = prev; // elem after o .prev to elem before o
-
-                // o should have been removed from any reference
-                numElements--;
-                return true;
+                return true; // element was removed
             }
+
+            pointer = pointer.next; // go through increment through linked list
         }
-        // pointer is null, list is empty or list does not contain o
+
         return false;
     }
 
@@ -314,14 +320,12 @@ public class MyDoubleLinkedList<T> implements List<T> {
     @Override
     public boolean addAll(Collection<? extends T> c) {
         boolean isModified = false; // store whether elements are added
-
         for (T element : c) {
             if (add(element)) {
-                // an element was added
                 isModified = true;
+                
             }
         }
-
         return isModified;
     }
 
@@ -331,8 +335,10 @@ public class MyDoubleLinkedList<T> implements List<T> {
      */
     @Override
     public boolean addAll(int index, Collection<? extends T> c) {
-        // TODO: Implement this method for extra credit.
-        throw new UnsupportedOperationException("Unimplemented method 'addAll'");
+        for (T elements : c) {
+            add(index, elements);
+        }
+        return true;
     }
 
     /**
@@ -381,13 +387,8 @@ public class MyDoubleLinkedList<T> implements List<T> {
      */
     @Override
     public void clear() {
-        // set 
-        head.next = null;
-        head.data = null;
-        head.prev = null;
-        tail.prev = null;
-        tail.data = null;
-        tail.next = null;
+        // set head and tail to null
+        head = tail = null;
         numElements = 0;
     }
 
@@ -397,26 +398,21 @@ public class MyDoubleLinkedList<T> implements List<T> {
      */
     @Override
     public T get(int index) {
-        if (index < 0 || index >= numElements) {
+        if (index < 0 || index >= numElements && index != 0) {
             // index is out of bounds
             throw new IndexOutOfBoundsException();
         } 
-        
-        if (index == 0 && head.data != null) {
-            return head.data; // index 0 is first element
-        } else if (index == numElements - 1 && tail.data != null) {
-            return tail.data; // index is at end of linked list
-        }
-
         Node<T> node = head;
         
-        // index isnt 0 or at end of the list
-        for (int i = 0; i < index; i++) {
+        // loop until having reached element at index
+        for (int i = 0; i <= index; i++) {
+            if (index == i) {
+                // arrived at i element
+                return node.data;
+            }
             node = node.next;
         }
 
-        System.out.println("stopped at " + index);
-        System.out.println("data is " + node.data);
         // having iter until index return that elements data
         return node.data;
     }
@@ -426,22 +422,21 @@ public class MyDoubleLinkedList<T> implements List<T> {
      * @return element previously at index
      */
     @Override
-    public T set(int index, Object element) {
+    public T set(int index, T element) {
         if (index < 0 || index >= numElements) {
             // index is out of bounds
             throw new IndexOutOfBoundsException();
         }
-        
-        Node<T> node = head;
 
-        for (int i = 0; i <= index; i++) {
-            node = node.next;
+        Node<T> pointer = head;
+        for (int i = 0; i < index; i ++) {
+            pointer = pointer.next;
         }
+        // arrived at the given index
+        T prevData = pointer.data;
+        pointer.data = element;
 
-        T prevData = node.data;
-        node.data = (T) element;
         return prevData;
-        
     }
 
     /**
@@ -449,25 +444,40 @@ public class MyDoubleLinkedList<T> implements List<T> {
      */
     @Override
     public void add(int index, T element) {
-        if (index < 0 || index <= numElements) {
+        if (index < 0 || index >= numElements) {
             // index is out of bounds
             throw new IndexOutOfBoundsException();
+        } 
+
+        Node<T> node = new Node<>(element, null, null);
+
+        if (head == null) {
+            head = tail = null; // list was empty
         } else if (index == 0) {
-            // index zero is head
-            head.data = element;
-        } else if (index == numElements - 1) {
-            // index is at tail of list
-            tail.data = element;
+            // insert node before head
+            node.next = head; // point node to head
+            head.prev = node; // point old head prev to node
+            head = node; // set node to head
+        } else if (index == numElements) {
+            // insert node after tail
+            node.prev = tail; // point node prev to tail
+            tail.next = node; // point old next tail to node
+            tail = node; // set node to tail
+        } else {
+            // somewhere inside list
+            Node<T> pointer = head;
+
+            for (int i = 0; i < index; i++) {
+                pointer = pointer.next;
+            }
+            // arrived at node before index
+            node.next = pointer.next; // point node to element at index
+            pointer.next = node; // element before index points to node
+            node.prev = pointer; // node prev set to element before index
+            node.next.prev = node; // set element at index prev to node
         }
-        // index somewhere in middle of list
-        // go to node at index
-        Node<T> node = head.next;
-        int i = 1; // since node starts after head
-        while (i != index) {
-            node = node.next;
-        }
-        // arrived at node at index
-        node.data = element;
+
+        numElements++; // node should be at index
     }
 
     /**
@@ -477,7 +487,7 @@ public class MyDoubleLinkedList<T> implements List<T> {
     @Override
     public T remove(int index) {
         T prevData; // data previously at index
-        if (index < 0 || index <= numElements) {
+        if (index < 0 || index >= numElements) {
             // index is out of bounds
             throw new IndexOutOfBoundsException();
         } else if (index == 0) {
@@ -555,10 +565,23 @@ public class MyDoubleLinkedList<T> implements List<T> {
         return new DoubleLinkedListIterator<T>(head);
     }
 
+    /**
+     * @param index of first element to return
+     * @return a list iterator over the elements in this list (in proper sequence), starting at the specified position in the list.
+     */
     @Override
     public ListIterator<T> listIterator(int index) {
-        // TODO: You can implement this method for extra credit.
-        throw new UnsupportedOperationException("Unimplemented method 'listIterator'");
+        if (index < 0 || index >= numElements) {
+            // index is out of bounds
+            throw new IndexOutOfBoundsException();
+        }
+
+        Node<T> pointer = head;
+        for (int i = 0; i < index; i++) {
+            pointer = pointer.next;
+        }
+
+        return new DoubleLinkedListIterator<>(pointer);
     }
 
     @Override
