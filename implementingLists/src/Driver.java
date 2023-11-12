@@ -136,6 +136,7 @@ public class Driver {
       // Check contains on an object that exists.
       checkDoesNotThrowException(testOutput, "contains", () -> {
          if (!list.contains(1) || !list.contains(2) || !list.contains(3) || list.contains(4) || list.contains("Foo")) {
+            System.out.println("fails");
             testOutput.put("contains", "Returned incorrect value.");
          } else {
             testOutput.put("contains", null);
@@ -152,20 +153,13 @@ public class Driver {
       if (list.add(4) == false) {
          testOutput.put("add", "Method returned false.");
       } else {
-         System.out.printf("size of linked list %d, elements ", list.size());
-         Object[] array = list.toArray();
-         for (Object elem : array) {
-            System.out.print(elem + " ");
-         } 
-         System.out.println();
-
          checkListContents(testOutput, "add", list, 1, 2, 3, 4);
       }
       // Remove an element that does not exist, check return value and size
       if (list.remove(Integer.valueOf(5))) {
          testOutput.put("remove non existent element", "Method returned true.");
       } else {
-         checkListContents(testOutput, "remove non existent element", list, 1, 2, 3, 4);
+         checkListContents(testOutput, "remove non existent element 5", list, 1, 2, 3, 4);
       }
 
       // Remove an element that exists in the list, check return value and size.
@@ -246,7 +240,6 @@ public class Driver {
          }
          index++;
       }
-
 
       // Now for extra credits.
       Map<String, String> extraCreditTestOutput = new HashMap<>();

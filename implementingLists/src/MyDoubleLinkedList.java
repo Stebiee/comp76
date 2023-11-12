@@ -1,4 +1,6 @@
+import java.rmi.UnexpectedException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -289,6 +291,7 @@ public class MyDoubleLinkedList<T> implements List<T> {
                 pointer.prev.next = pointer.next; // update prev.next to be after o
                 pointer.next.prev = pointer.prev; // update next.prev to be before o
 
+                numElements--;
                 return true; // element was removed
             }
 

@@ -49,7 +49,7 @@ public class QuickSort {
         array[index2] = temp;
     }
 
-    private static int partition (int[] array, int lowIndex, int highIndex,int pivot) {
+    private static int partition(int[] array, int lowIndex, int highIndex,int pivot) {
         // create a left and right pointer
         // left pointer begins at the leftmost element in an array
         // increase index looking for element > pivot
