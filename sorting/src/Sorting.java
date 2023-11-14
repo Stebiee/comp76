@@ -1,4 +1,6 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -193,7 +195,51 @@ public class Sorting {
     }
 
     public static void heapSort(ArrayList<Integer> input) {
-        // TODO: Implement this method.
+        int n = input.size();
+
+        // Build max heap
+        for (int i = n / 2 - 1; i >= 0; i--) {
+            heapify(input, n, i);
+        }
+
+        // Extract elements from the heap one by one
+        for (int i = n - 1; i > 0; i--) {
+            // Swap the root (maximum element) with the last element
+            int temp = input.get(0);
+            input.set(0, input.get(i));
+            input.set(i, temp);
+
+            // Call max heapify on the reduced heap
+            heapify(input, i, 0);
+        }
+    }
+
+    private static void heapify(ArrayList<Integer> input, int size, int index) {
+        // initialize the index of max element
+        int maxIndex = index; 
+        // creating a left child
+        int leftChild = 2 * index + 1; 
+        // creating a right child
+        int rightChild = 2 * index + 2;
+
+        if (leftChild < size && input.get(leftChild) > input.get(maxIndex)) {
+            // left child is greater than max element
+            maxIndex = leftChild;
+        }
+
+        if (rightChild < size && input.get(rightChild) > input.get(maxIndex)) {
+            // right child is greater than max element
+            maxIndex = rightChild;
+        }
+
+        // If largest is not root
+        if (maxIndex != index) {
+            // swap index and max
+            swap(input, index, maxIndex);
+
+            // Recursively heapify the affected sub-tree
+            heapify(input, size, maxIndex);
+        }
     }
 
     public static void radixSort(ArrayList<Integer> input) {
@@ -261,7 +307,7 @@ public class Sorting {
         //     System.out.println(elem);
         // }
         System.out.println("Array Size  |  Selection    Merge    Quick    Heap    Radix");
-        System.out.printf("50,000        %,d millis  %,d millis", selectionSort(list1), mergeSort(list1));
+        System.out.printf("50,000        %,d ms  %,d ms", selectionSort(list1), mergeSort(list1));
         
     }
 
