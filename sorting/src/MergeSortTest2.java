@@ -4,7 +4,6 @@ import java.util.Comparator;
 /**
  * this class contains methods which use 2 mergeSort methods 
  * to be used to sort objects
- * @author Esteban Madrigal
  */
 public class MergeSortTest2 {
 
