@@ -148,9 +148,17 @@ public class MyBinarySearchTree<T extends Comparable<T>> {
      * @param fn The function to call when traversing a node.
      */
     public void inorder(Function<T, Void> fn) {
-        // TODO: Do an inorder traversal of the tree and call the given function with the element
         // To call the function you invoke the apply method in it. (e.g. fn.apply(t) where t is the data in
         // the TreeNode that is being traversed).
+        inorder(root, fn);
+    }
+
+    private void inorder(TreeNode<T> node, Function<T, Void> fn) {
+        if (node != null) {
+            inorder(node.left, fn);
+            fn.apply(node.data);
+            inorder(node.right, fn);
+        }
     }
 
     /**
@@ -158,9 +166,17 @@ public class MyBinarySearchTree<T extends Comparable<T>> {
      * @param fn The function to call when traversing a node.
      */
     public void preorder(Function<T, Void> fn) {
-        // TODO: Do an inorder traversal of the tree and call the given function with the element
         // To call the function you invoke the apply method in it. (e.g. fn.apply(t) where t is the data in
         // the TreeNode that is being traversed).
+        preorder(root, fn);
+    }
+
+    private void preorder(TreeNode<T> node, Function<T, Void> fn) {
+        if (node != null) {
+            fn.apply(node.data); // root node first
+            preorder(node.left, fn); // traverse left subtree
+            preorder(node.right, fn); // traverse right subtree
+        }
     }
 
     /**
@@ -168,9 +184,17 @@ public class MyBinarySearchTree<T extends Comparable<T>> {
      * @param fn The function to call when traversing a node.
      */
     public void postorder(Function<T, Void> fn) {
-        // TODO: Do an inorder traversal of the tree and call the given function with the element
         // To call the function you invoke the apply method in it. (e.g. fn.apply(t) where t is the data in
         // the TreeNode that is being traversed).
+        postorder(root, fn);
+    }
+
+    private void postorder(TreeNode<T> node, Function<T, Void> fn) {
+        if (node != null) {
+            postorder(node.left, fn); // traverse left subtree
+            postorder(node.right, fn); // traverse right subtree
+            fn.apply(node.data); // root node
+        }
     }
 
     /**
@@ -194,18 +218,5 @@ public class MyBinarySearchTree<T extends Comparable<T>> {
             // data is greater than root so recursive call with right child
             return searchHelper(root.right, data);
         }
-    }
-
-    public void display() {
-        displayHelper(root);
-    }
-
-    private void displayHelper(TreeNode<T> root) {
-        if (root == null) {
-            return; // no existing node, cant do anything
-        }
-        displayHelper(root.left);// data all the way to the left is the least
-        System.out.println(root.data);// would be the second least
-        displayHelper(root.right);// would be 
     }
 }

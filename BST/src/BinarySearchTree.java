@@ -38,7 +38,7 @@ public class BinarySearchTree {
         }
         displayHelper(root.left);// data all the way to the left is the least
         System.out.println(root.data);// would be the second least
-        displayHelper(root.right);// would be 
+        displayHelper(root.right);// would be 3rd
     }
 
     public boolean search(int data) {
