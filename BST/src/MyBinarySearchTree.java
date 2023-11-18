@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.function.Function;
 
+import javax.swing.tree.TreeNode;
+
 /**
  * Assignment for the Binary Search Tree module.
  * You need to implement all the TODOs.
@@ -43,8 +45,29 @@ public class MyBinarySearchTree<T extends Comparable<T>> {
      * @return true if the element was inserted, false if it wasn't (ie. there was a duplicate element)
      */
     public boolean insert(T t) {
-        // TODO: Implement this method.
-        return false;
+        TreeNode<T> node = new TreeNode<>(t, null, null);
+        root = insertHelper(root, node);
+        return true;
+    }
+
+    private TreeNode<T> insertHelper(TreeNode<T> root, TreeNode<T> node) {
+        T data = node.data;
+
+        if (root == null) {
+            // node would be the first so assign it root
+            root = node;
+        } else if (data.compareTo((T)root.data) < 0) {
+            // nodes data is less than root so go to the left
+            root.left = insertHelper(root.left, node);
+        } else if (data.compareTo((T)root.data) > 0){
+            // nodes data is greater than root so go right 
+            root.right = insertHelper(root.right, node);
+        } else {
+            // nodes data is equal, dont add 
+            return root;
+        }
+
+        return root;
     }
 
     /**
@@ -53,8 +76,70 @@ public class MyBinarySearchTree<T extends Comparable<T>> {
      * @return true if element existed (and was deleted), false otherwise.
      */
     public boolean delete(T t) {
-        // TODO: Implement this method. 
-        return false;
+        // check if t is in BST
+        if (!this.search(t)) {
+            System.out.println(t.toString() + " was not in BST");
+            return false; // t was not in BST
+        }
+        // t is in BST
+        deleteHelper(root, t);
+        return true;
+    }
+
+    private TreeNode<T> deleteHelper(TreeNode<T> root, T t) {
+        if (root == null) {
+            return null; // list is empty nothing to remove 
+        } else if (t.compareTo((T)root.data) < 0) {
+            root.left = deleteHelper(root.left, t); // keep going to left child while less than root
+        } else if (t.compareTo((T)root.data) > 0) {
+            root.right = deleteHelper(root.right, t); // keep going to right child while less than root
+        } else {
+            // t was found
+            if (root.left == null && root.right == null) {
+                // node to be removed is a leaf
+                root = null; // set node to null 
+            } else if (root.right != null) {
+                // there is a right child so successor is needed for replacement 
+                root.data = successor(root);
+                root.right = deleteHelper(root.right, (T)root.data);
+            } else {
+                // there is a left child so predecessor is needed for replacement
+                root.data = predecessor(root);
+                root.left = deleteHelper(root.left, (T)root.data);
+            }
+        }
+
+        return root;
+    }
+    /**
+     * @param root
+     * @return the least value in the right subtree of root
+     */
+    private T successor(TreeNode<T> root) {
+        root = root.right; // set the root to be right child of passed node
+
+        while (root.left != null) {
+            // loop will go left most child in subtree
+            root = root.left;
+        }
+
+        return (T)root.data;
+    }
+
+    /**
+     * 
+     * @param root
+     * @return the greatest value in the left subtree
+     */
+    private T predecessor(TreeNode<T> root) {
+        root = root.left; // set the root to be left child of passed node
+
+        while (root.right != null) {
+            // loop will go to right mode child in subtree
+            root = root.right;
+        }
+
+        return (T)root.data; 
     }
 
     // Inorder traversal, postorder traversal, preorder traversal.
@@ -94,7 +179,33 @@ public class MyBinarySearchTree<T extends Comparable<T>> {
      * @return true if the value is found in the tree, false otherwise.
      */
     public boolean search(T t) {
-        // TODO: Implement this method.
-        return false;
+        return searchHelper(root, t);
+    }
+
+    private boolean searchHelper(TreeNode<T> root, T data) {
+        if (root == null) {
+            return false; // tree is empty
+        } else if (root.data.equals(data)) {
+            return true; // root is data
+        } else if (data.compareTo((T)root.data) < 0) {
+            // data is less than so recursive call with left child
+            return searchHelper(root.left, data);
+        } else {
+            // data is greater than root so recursive call with right child
+            return searchHelper(root.right, data);
+        }
+    }
+
+    public void display() {
+        displayHelper(root);
+    }
+
+    private void displayHelper(TreeNode<T> root) {
+        if (root == null) {
+            return; // no existing node, cant do anything
+        }
+        displayHelper(root.left);// data all the way to the left is the least
+        System.out.println(root.data);// would be the second least
+        displayHelper(root.right);// would be 
     }
 }
