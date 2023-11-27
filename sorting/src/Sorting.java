@@ -3,8 +3,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Function;
 
 public class Sorting {
+    public static long run(Function<ArrayList<Integer>, Void> sortAlgo, ArrayList<Integer> input) {
+         long startTime = System.currentTimeMillis( );
+         sortAlgo.apply(input);
+         long endTime = System.currentTimeMillis( ); 
+        long executionTime = endTime - startTime;
+        return executionTime;
+    }
     /**
      * compare index 0 with rest of elements, swap with index whos value is lowest
      * @param input
@@ -242,8 +250,49 @@ public class Sorting {
         }
     }
 
-    public static void radixSort(ArrayList<Integer> input) {
-        // TODO: Implement this method.
+    public static void radixSort(ArrayList<Integer> list) {
+
+        int max = list.get(0);
+        for (int i = 1; i < list.size(); i++) {
+            if (list.get(i) > max) {
+                max = list.get(i);
+            }
+        }
+
+        // counting sort for every digit
+        for (int exp = 1; max / exp > 0; exp *= 10) {
+            countSort(list, exp);
+        }
+    }
+
+    private static void countSort(ArrayList<Integer> input, int exp) {
+        ArrayList<Integer> output = new ArrayList<>(input.size()); // preserves input whild sorting
+        int[] digits = new int[10]; // stores digits 0-9 where index is digit and occurence is value
+        int size = input.size();
+
+        // fills digits with 0 
+        for (int i = 0; i < 10; i++) {
+            digits[i] = 0;
+        }
+
+        // stores occurences of a digit at 10^i place 
+        for (int i = 0; i < size; i++) {
+            digits[(input.get(i) / exp) %10]++;
+        }
+
+        // modify digits to contain position in output
+        for (int i = 1; i < 10; i++) {
+            digits[i] += digits[i - 1];
+        }
+
+        // 
+        for (int i = size - 1; i >= 0; i--) {
+            output.set(digits[(input.get(i) / exp) % 10] - 1, input.get(i));
+            digits[(input.get(i) / exp) %10]--;
+        }
+
+        // set input to output 
+        input = output;
     }
 
     public static void mainHelper() {
