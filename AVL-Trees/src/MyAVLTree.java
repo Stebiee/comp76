@@ -295,6 +295,7 @@ public class MyAVLTree<T extends Comparable<T>> {
      */
     public boolean search(T data){
         return search(root, data); 
+        
     }
 
     /**
