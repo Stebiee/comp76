@@ -154,14 +154,13 @@ public class MyHashMap<K, V> implements Map<K, V> {
         for (Map.Entry<K, V> entry : entries) {
             if (entry != null) {
                 int newIndex = getKeyIndex(entry.getKey(), 0);
-                for (int i = 0; i < newEntries.length; i++) {
-                    int newIndexAttempt = getKeyIndex(entry.getKey(), i);
+                for (int i = 0; i < newSize; i++) {
+                    int newIndexAttempt = (newIndex + i + i * i) % newSize;
                     if (newEntries[newIndexAttempt] == null) {
-                        newIndex = newIndexAttempt;
+                        newEntries[newIndexAttempt] = entry;
                         break;
                     }
                 }
-                newEntries[newIndex] = entry;
             }
         }
 
