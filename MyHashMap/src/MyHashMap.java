@@ -46,14 +46,20 @@ public class MyHashMap<K, V> implements Map<K, V> {
         return (value.hashCode() + (iteration + iteration * iteration) / 2) % entries.length;
     }
 
+    private int getResizedKeyIndex(K key, int iteration, int newSize) {
+        return (key.hashCode() + (iteration + iteration * iteration) / 2) % newSize;
+    }
+
     @Override
     public int size() {
-        return numElements;
+        // size of map
+        return entries.length;
     }
 
     @Override
     public boolean isEmpty() {
-        return size() == 0;
+        // numElements is the amount of keys in map
+        return numElements == 0;
     }
 
     @Override
@@ -118,25 +124,31 @@ public class MyHashMap<K, V> implements Map<K, V> {
 
     @Override
     public V put(K key, V value) {
+        // initial index from probing function
         int index = getKeyIndex(key, 0);
 
         for (int i = 0; i < entries.length; i++) {
+            // the slot from initial index
             Map.Entry<K, V> entry = entries[index];
 
             if (entry == null) {
+                // a new key will be inserted
+                if ((double) numElements / entries.length > 0.5) {
+                    // resizing if entries is half full
+                    resize();
+                }
+                // set the entry at index as the key value pair
                 entries[index] = new SimpleEntry<>(key, value);
                 numElements++;
 
-                // Check if resizing is needed (50% full condition)
-                if ((double) numElements / entries.length >= 0.5) {
-                    resizeAndRehash();
-                }
-
+                // there was no previous value return null
                 return null;
             } else if (entry.getKey().equals(key)) {
-                V oldValue = entry.getValue();
+                // previous key pair replace the value 
+                V oldValue = entry.getValue(); // store the previous value
                 entries[index].setValue(value);
-                return oldValue;
+
+                return oldValue; // return the old value
             }
 
             index = getKeyIndex(key, i + 1);
@@ -144,18 +156,17 @@ public class MyHashMap<K, V> implements Map<K, V> {
         return null;
     }
 
-    // Resize the array and rehash the elements
-    private void resizeAndRehash() {
-        // Double the array size and create a new array
+    private void resize() {
+        // double old size to keep map power of 2
         int newSize = entries.length * 2;
-        Map.Entry[] newEntries = new Map.Entry[newSize];
-
-        // Rehash each element into the new array
+        Map.Entry<K,V>[] newEntries = new Map.Entry[newSize];
+    
         for (Map.Entry<K, V> entry : entries) {
             if (entry != null) {
-                int newIndex = getKeyIndex(entry.getKey(), 0);
-                for (int i = 0; i < newEntries.length; i++) {
-                    int newIndexAttempt = getKeyIndex(entry.getKey(), i);
+                // entry contains a mapping
+                int newIndex = getResizedKeyIndex(entry.getKey(), 0, newSize);
+                for (int i = 0; i < newSize; i++) {
+                    int newIndexAttempt = getResizedKeyIndex(entry.getKey(), i, newSize);
                     if (newEntries[newIndexAttempt] == null) {
                         newIndex = newIndexAttempt;
                         break;
@@ -164,14 +175,13 @@ public class MyHashMap<K, V> implements Map<K, V> {
                 newEntries[newIndex] = entry;
             }
         }
-
-        // Update the array reference and resize-related variables
-        entries = newEntries;
-        // You may need to update any other variables related to the array size or resizing logic
+    
+        this.entries = newEntries; // updating the entries to new entries
     }
 
     @Override
     public V remove(Object key) {
+
         int index = getKeyIndex((K) key, 0);
 
         for (int i = 0; i < entries.length; i++) {
@@ -209,7 +219,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
 
     @Override
     public Set<K> keySet() {
-        Set<K> keySet = new HashSet<>();
+        Set<K> keySet = new HashSet<>(numElements);
         for (Map.Entry<K, V> entry : entries) {
             if (entry != null) {
                 keySet.add(entry.getKey());
