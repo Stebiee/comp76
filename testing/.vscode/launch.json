@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "testing",
+            "request": "launch",
+            "mainClass": "testing",
+            "projectName": "testing_5e8e6b34"
+        },
+        {
+            "type": "java",
             "name": "Radix",
             "request": "launch",
             "mainClass": "Radix",

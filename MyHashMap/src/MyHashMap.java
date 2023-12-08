@@ -168,11 +168,10 @@ public class MyHashMap<K, V> implements Map<K, V> {
                 for (int i = 0; i < newSize; i++) {
                     int newIndexAttempt = getResizedKeyIndex(entry.getKey(), i, newSize);
                     if (newEntries[newIndexAttempt] == null) {
-                        newIndex = newIndexAttempt;
+                        newEntries[newIndexAttempt] = entry;
                         break;
                     }
                 }
-                newEntries[newIndex] = entry;
             }
         }
     
