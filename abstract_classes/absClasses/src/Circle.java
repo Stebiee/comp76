@@ -11,7 +11,7 @@ public class Circle extends GeometricObject{
         this.radius = radius;
     }
 
-    // implementing getArea() from base class GeometricObject
+    // implementing getArea() from base class GeometricObject test
     @Override
     public double getArea() {
         return Math.PI * Math.pow(radius, 2);
